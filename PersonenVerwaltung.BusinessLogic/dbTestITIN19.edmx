@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="dbTestITIN19Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="tblOrt">
+          <Key>
+            <PropertyRef Name="pkOrt" />
+          </Key>
+          <Property Name="pkOrt" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ortsName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="plz" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblPerson">
+          <Key>
+            <PropertyRef Name="pkPerson" />
+          </Key>
+          <Property Name="pkPerson" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="vorname" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="nachname" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="geschlecht" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="fkOrt" Type="int" Nullable="false" />
+          <Property Name="aktiv" Type="bit" Nullable="false" />
+          <Property Name="geburtsDatum" Type="smalldatetime" />
+        </EntityType>
+        <Association Name="fk_person_orte">
+          <End Role="tblOrt" Type="Self.tblOrt" Multiplicity="1" />
+          <End Role="tblPerson" Type="Self.tblPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblOrt">
+              <PropertyRef Name="pkOrt" />
+            </Principal>
+            <Dependent Role="tblPerson">
+              <PropertyRef Name="fkOrt" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbTestITIN19ModelStoreContainer">
+          <EntitySet Name="tblOrt" EntityType="Self.tblOrt" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblPerson" EntityType="Self.tblPerson" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="fk_person_orte" Association="Self.fk_person_orte">
+            <End Role="tblOrt" EntitySet="tblOrt" />
+            <End Role="tblPerson" EntitySet="tblPerson" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="dbTestITIN19Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Ort">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PLZ" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AllePersonen" Relationship="Self.fk_person_orte" FromRole="tblOrt" ToRole="tblPerson" />
+        </EntityType>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Vorname" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Nachname" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Geschlecht" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="ID_Ort" Type="Int32" Nullable="false" />
+          <Property Name="Aktiv" Type="Boolean" Nullable="false" />
+          <Property Name="GeburtsDatum" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="Ort" Relationship="Self.fk_person_orte" FromRole="tblPerson" ToRole="tblOrt" />
+        </EntityType>
+        <Association Name="fk_person_orte">
+          <End Role="tblOrt" Type="dbTestITIN19Model.Ort" Multiplicity="1" />
+          <End Role="tblPerson" Type="dbTestITIN19Model.Person" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblOrt">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="tblPerson">
+              <PropertyRef Name="ID_Ort" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbTestITIN19Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AlleOrte" EntityType="dbTestITIN19Model.Ort" />
+          <EntitySet Name="AllePersonen" EntityType="dbTestITIN19Model.Person" />
+          <AssociationSet Name="fk_person_orte" Association="Self.fk_person_orte">
+            <End Role="tblOrt" EntitySet="AlleOrte" />
+            <End Role="tblPerson" EntitySet="AllePersonen" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="dbTestITIN19ModelStoreContainer" CdmEntityContainer="dbTestITIN19Entities">
+          <EntitySetMapping Name="AlleOrte">
+            <EntityTypeMapping TypeName="dbTestITIN19Model.Ort">
+              <MappingFragment StoreEntitySet="tblOrt">
+                <ScalarProperty Name="ID" ColumnName="pkOrt" />
+                <ScalarProperty Name="Name" ColumnName="ortsName" />
+                <ScalarProperty Name="PLZ" ColumnName="plz" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AllePersonen">
+            <EntityTypeMapping TypeName="dbTestITIN19Model.Person">
+              <MappingFragment StoreEntitySet="tblPerson">
+                <ScalarProperty Name="ID" ColumnName="pkPerson" />
+                <ScalarProperty Name="Vorname" ColumnName="vorname" />
+                <ScalarProperty Name="Nachname" ColumnName="nachname" />
+                <ScalarProperty Name="Geschlecht" ColumnName="geschlecht" />
+                <ScalarProperty Name="ID_Ort" ColumnName="fkOrt" />
+                <ScalarProperty Name="Aktiv" ColumnName="aktiv" />
+                <ScalarProperty Name="GeburtsDatum" ColumnName="geburtsDatum" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Kein" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
